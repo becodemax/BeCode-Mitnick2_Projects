@@ -14,7 +14,7 @@ while True:
     
     password = input("Enter your password : ")
 
-    password_pattern = r'.{6,}'
+    password_pattern = r'^(?=.{6,})(?=.+[a-z])(?=.+[A-Z])(?=.+[0-9])(?=.+[@#$]).*$'
 
     if re.match(password_pattern, password):
         print(f"{password} is valid")
