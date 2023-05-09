@@ -23,11 +23,11 @@ print(ludo.introduce_becodian())
      
 
 # Create you Learner class here!
-
+'''
 class Learner(Becodian):
 
     def __init__(self, name, promotion):
-        self.name = name
+        # self.name = name
         self.promotion = promotion
 
     def introduce_learner(self):
@@ -36,7 +36,17 @@ class Learner(Becodian):
             super().introduce_becodian()
         else:
             return f"{self.name} is a learner! From {self.promotion}!"
-    
+'''
+
+class Learner(Becodian):
+
+    def __init__(self, name, promotion):
+        super().__init__(name, False)
+        self.promotion = promotion
+
+    def introduce_learner(self):
+        return f"{super().introduce_becodian()} From {self.promotion}!"
+
 max = Learner("Max", "Mitnick 2")
 
 print(max.introduce_learner())
