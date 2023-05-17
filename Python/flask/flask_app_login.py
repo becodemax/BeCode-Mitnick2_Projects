@@ -3,9 +3,12 @@ from flask import Flask, render_template, request, redirect, url_for, session
 app = Flask(__name__)
 app.secret_key = "9d00bd51604df0e5e7431a931d9870b116b96b02329af3b217f332ef49cb171e"
 
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 users = [
     {'nom': 'admin', 'mdp': '12345'},
@@ -13,14 +16,29 @@ users = [
     {'nom': 'user', 'mdp': 'user'},
 ]
 
+
+
 def search_user(name, password):
     for user in users:
         if user['nom'] == name and user['mdp'] == password:
             return user
     return None
 
+
+
+def genre(n):
+    if n == 1:
+        return 'Homme'
+    elif n == 2:
+        return 'Femme'
+    else:
+        return 'Ananas'
+
+
+
 @app.route("/login", methods=['POST', 'GET'])
 def login():
+    
     if request.method == 'POST':
         user_data = request.form
         user_name = user_data.get('nom')
@@ -41,6 +59,17 @@ def login():
         if 'name' in session:
             return redirect(url_for('index'))
         return render_template("login.html")
+    
+
+
+@app.route("/logout")
+def logout():
+    print(session)
+    session.pop('name', None)
+    print(session)
+    return redirect(url_for('index'))
+
+
 
 @app.route("/visits")
 def visits():
@@ -51,6 +80,26 @@ def visits():
     print(session)
     n_visit = session['compt']
     return f"Nombre de visites : {n_visit}"
+
+
+
+@app.route("/formulaire/", methods = ['POST', 'GET'])
+def formulaire():
+    if request.method == 'POST':
+        return redirect(url_for('formulaire'))
+    else:
+        return render_template("formulaire.html")
+    
+
+
+@app.route('/thanks', methods = ['POST', 'GET'])
+def thanks():
+    if request.method == 'POST':
+        return render_template('thanks.html')
+    else:
+        return render_template('formulaire.html')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

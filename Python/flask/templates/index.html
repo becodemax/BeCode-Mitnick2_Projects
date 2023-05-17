@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>anh ouais</title>
+    <title>Accueil</title>
 </head>
 <body>
-    <p>Bienvenue sur mon site !</p>
-    <a href="{{ url_for('login') }}">Connexion</a>
+    {% if session['name'] %}
+        <p>Bonjour {{ session['name']|title }}, bienvenue sur mon site !</p>
+        <a href="{{ url_for('logout') }}">Déconnexion</a>
+        <a href="{{ url_for('formulaire') }}">Formulaire</a>
+    {% else %}
+        <p1>Bonjour invité, bienvenue sur mon site!</p1>
+        <a href="{{ url_for('login') }}">Connexion</a>
+        <a href="{{ url_for('formulaire') }}">Formulaire</a>
+    {% endif %}
 </body>
 </html>
