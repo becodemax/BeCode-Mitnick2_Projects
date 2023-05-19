@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+import time
 
 app = Flask(__name__)
 app.secret_key = "9d00bd51604df0e5e7431a931d9870b116b96b02329af3b217f332ef49cb171e"
@@ -26,10 +27,10 @@ def search_user(name, password):
 
 
 
-def genre(n):
-    if n == 1:
+def genre_function(n):
+    if n == '1':
         return 'Homme'
-    elif n == 2:
+    if n == '2':
         return 'Femme'
     else:
         return 'Ananas'
@@ -85,6 +86,7 @@ def visits():
 
 @app.route("/formulaire/", methods = ['POST', 'GET'])
 def formulaire():
+    time.sleep(2)
     if request.method == 'POST':
         return redirect(url_for('formulaire'))
     else:
@@ -94,8 +96,11 @@ def formulaire():
 
 @app.route('/thanks', methods = ['POST', 'GET'])
 def thanks():
+    time.sleep(2)
     if request.method == 'POST':
-        return render_template('thanks.html')
+        user_data = request.form
+        genre = genre_function(user_data.get('genre'))
+        return render_template('thanks.html', user_data = user_data, genre = genre)
     else:
         return render_template('formulaire.html')
 

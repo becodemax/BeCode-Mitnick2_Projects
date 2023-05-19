@@ -9,6 +9,14 @@
 <body>
     <p>Merci de nous avoir contacté!</p>
     <p>Résumé : </p>
+    <p> - Nom : {{ user_data.get('nom') }}</p>
+    <p> - Prénom : {{ user_data.get('prenom') }}</p>
+    <p> - Email : {{ user_data.get('email') }}</p>
+    <p> - Pays : {{ user_data.get('pays') }}</p>
+    <p> - Genre : {{ genre }}</p>
+    <p> - Demande : {{ user_data.get('demande') }}</p>
+    <p> - Commentaire client : </p>
+    <p>{{ user_data.get('commentaire') }}</p>
     <a href="{{ url_for('index') }}">Accueil</a>
 </body>
 </html>
