@@ -8,6 +8,7 @@
 </head>
 <body>
     <h1>Formulaire</h1>
+    <form action="{{ url_for('formulaire_wtforms') }}" method="POST">
     {% if name %}
         <h1>Hello {{ name }} {{ lastname }} </h1>
     {% else %}
@@ -21,11 +22,31 @@
             {{ form.name.label() }}
             {{ form.name() }}
             <br/>
-            <select name="select" id="pays">
-                {% for x in country %}
-                <option value="{{ x }}">{{ x }}</option>
-                {% endfor %}
+            {{ form.hidden_tag() }}
+            {{ form.email.label() }}
+            {{ form.email() }}
+            <br/>
+            <label for="country">Pays résidentiel : </label>
+            <select name="country" id="country" required>
+                <option value="france">France</option>
+                <option value="belgique">Belgique</option>
+                <option value="allemagne">Allemagne</option>
             </select>
+            <br/>
+            {% for subfield in form.genre_radio %}
+            <p>
+                {{ subfield }}
+                {{ subfield.label }}
+            </p>
+            {% endfor %}
+            <br/>
+            {{ form.hidden_tag() }}
+            {{ form.demand_checkbox.label() }}
+            {{ form.demand_checkbox() }}
+            <br/>
+            {{ form.hidden_tag() }}
+            {{ form.comment.label() }}
+            {{ form.email() }}
             <br/>
             {{ form.submit() }}
         </form>
