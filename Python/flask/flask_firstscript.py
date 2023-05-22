@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_wtf import FlaskForm
+from wtforms import StringField
+from wtforms.validators import DataRequired
 import time
 
 app = Flask(__name__)
