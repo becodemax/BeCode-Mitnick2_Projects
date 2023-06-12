@@ -5,3 +5,11 @@ Username : anhouais
 Password : test12345
 Username : bob
 Password : flag{7H15MY5UP3rP455W0rD!1337}
+Username : bob.shiba@gmail.com
+Password : Shiba1234
+Username : benjamin@gmail.com
+Password : btyuhbziugvbrebre156132467
+Username : Emre
+Password : byfuoabuofbay17649575
+Username : jeromes@gmail.com
+Password : ilovemaxou
