@@ -12,7 +12,7 @@ function math() {
 		d_zero_pattern="^([0-9.]+)([-+*/])(0+)$"
 
 		if [[ $input =~ $d_zero_pattern ]]; then
-			echo "	nah bro, I ain't doin that"
+			echo "	Operation failed successfully."
 		elif [[ $input =~ $pattern ]]; then
 			echo "	The result is $(($input))"
 		elif [ $input = "x" ]; then
