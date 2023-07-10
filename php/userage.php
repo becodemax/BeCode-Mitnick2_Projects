@@ -96,23 +96,23 @@
         }
     }
 
-    function userAgeForm($method, $age, $gender, $speak_en, $submit) {
+    function userAgeForm($age, $gender, $speak_en, $submit) {
         $check_all_fields = CheckAllFields($age, $gender, $speak_en, $submit);
         $person = Gender($gender);
         $greetings = SpeakEnglish($speak_en);
-        if ( $method == 'POST' ) {
-            if ( $check_all_fields == 0 ) {
-                echo "Something is wrong! ";
-                return 0;
-            }
-            elseif ( $check_all_fields == 1 ) {
-                Greeting($age, $person, $greetings);
-                return 1;
-            }
+        if ( $check_all_fields == 0 ) {
+            echo "Something went wrong! ";
+            return 0;
+        }
+        elseif ( $check_all_fields == 1 ) {
+            Greeting($age, $person, $greetings);
+            return 1;
         }
     }
 
-    userAgeForm($method, $age, $gender, $speak_en, $submit);
+    if ( $method == 'POST' ) {
+        userAgeForm($age, $gender, $speak_en, $submit);
+    }
 
     ?>
 

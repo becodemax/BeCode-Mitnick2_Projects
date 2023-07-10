@@ -1,5 +1,5 @@
 <html>
-  <head><title>User Age</title></head>
+  <head><title>Soccer Team</title></head>
 
     <form method="post" action="soccerteam.php">
 
@@ -75,28 +75,28 @@
         }
     }
 
-    function TeamMessage($method, $age, $gender, $name, $submit) {
+    function TeamMessage($age, $gender, $name, $submit) {
         $allfields = CheckAllFields($age, $gender, $name, $submit);
         $criteria = CheckCriteria($age, $gender);
-        if ( $method == 'POST' ) {
-            if ( $allfields == 1 && $criteria == 1 ) {
-                echo "Welcome to the team $name!";
+        if ( $allfields == 1 && $criteria == 1 ) {
+            echo "Welcome to the team $name!";
+        }
+        elseif ( $allfields == 1 && $criteria == 0 ) {
+            echo "Sorry $name, you don't fit the criteria.";
+        }
+        elseif ( $allfields == 0 ) {
+            if ( isset($name) ) {
+                echo "$name, please complete all the fields. This incident will be reported. ";
             }
-            elseif ( $allfields == 1 && $criteria == 0 ) {
-                echo "Sorry $name, you don't fit the criteria.";
-            }
-            elseif ( $allfields == 0 ) {
-                if ( isset($name) ) {
-                    echo "$name, please complete all the fields. This incident will be reported. ";
-                }
-                else {
-                    echo "Please complete all the fields.";
-                }
+            else {
+                echo "Please complete all the fields.";
             }
         }
     }
 
-    TeamMessage($method, $age, $gender, $name, $submit)
+    if ( $method == 'POST' ) {
+        TeamMessage($age, $gender, $name, $submit);
+    }
 
     ?>
 
