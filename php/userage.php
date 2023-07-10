@@ -1,70 +1,120 @@
 <html>
   <head><title>User Age</title></head>
+
+    <form method="post" action="userage.php">
+
+    <p>Do you speak English?</p>
+    <input type="radio" id="en_yes" name="speak_en" value="yes">
+    <label for="speak_en">Yes</label><br>
+    <input type="radio" id="en_no" name="speak_en" value="no">
+    <label for="speak_en">No</label>
+    <br>
+
+    <p>Man or woman?</p>
+    <input type="radio" id="woman" name="gender" value="woman">
+    <label for="woman">Woman</label><br>
+    <input type="radio" id="man" name="gender" value="man">
+    <label for="man">Man</label>
+    <br>
+
+    <p>How old are you?</p>
+    <label for="age">Please type your age : </label>
+    <input type="" name="age">
+    <input type="submit" name="submit" value="Submit">
+    <br>
+
+    </form>
+
     <?php
+
+    $method = $_SERVER['REQUEST_METHOD'];
 
     if ( isset($_POST['age']) ) {
         $input = ctype_digit($_POST['age']);
-        if ( $input == 0 ) {
-            echo "Please enter a valid age number! This incident will be reported.";
-        }
-        elseif ( $input == 1 ) {
+        if ( $input == 1 ) {
             $age = $_POST['age'];
         }
     }
-    if ( isset($_POST['genre']) ) {
-        $input = ctype_alpha($_POST['genre']);
-        if ( $input == 0 ) {
-            echo "Please enter a valid gender! This incident will be reported.";
+    if ( isset($_POST['gender']) ) {
+        $input = $_POST['gender'];
+        if ( $input == 'man' || $input == 'woman' ) {
+            $gender = $input;
         }
-        elseif ( $input == 1 ) {
-            $genre = $_POST['genre'];
+    }
+    if ( isset($_POST['speak_en']) ) {
+        $input = $_POST['speak_en'];
+        if ( $input == 'yes' || $input == 'no' ) {
+            $speak_en = $input;
+        }
+    }
+    if ( isset($_POST['submit']) ) {
+        $input = $_POST['submit'];
+        if ( $input == 'Submit' ) {
+            $submit = $input;
         }
     }
 
-    function userAge($age, $person) {
+    function CheckAllFields($age, $gender, $speak_en, $submit) {
+        if ( isset($speak_en, $gender, $age, $submit) ) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    function Greeting($age, $person, $greetings) {
         if ($age < 12){
-            echo "You're $age years old! Hello $person kiddo!";
+            echo "You're $age years old! $greetings $person kiddo!";
         }
-        if ($age >= 12 && $age < 18){
-            echo "You're $age years old! Hello $person teenager!";
+        elseif ($age >= 12 && $age < 18){
+            echo "You're $age years old! $greetings $person teenager!";
         }
-        if ($age >= 18 && $age < 115){
-            echo "You're $age years old! Hello $person adult!";
+        elseif ($age >= 18 && $age < 115){
+            echo "You're $age years old! $greetings $person adult!";
         }
-        if ($age > 115){
+        elseif ($age > 115){
             echo "You're $age years old! Wow! Still alive $person? Are you a robot, like me ? Can I hug you ?!";
         }
     }
 
-    function userAgeForm($age, $genre) {
-        if ( $genre == "man" && $age ){
-            $person = "Mister";
-            userAge($age, $person);
+    function Gender($gender) {
+        if ( $gender == "man" ){
+            return "Mister";
         }
-        if ( $genre == "woman" && $age ){
-            $person = "Miss";
-            userAge($age, $person);
+        elseif ( $gender == "woman" ){
+            return "Miss";
         }
     }
 
-    userAgeForm($age, $genre);
+    function SpeakEnglish($speak_en) {
+        if ( $speak_en == "yes" ) {
+            return "Hello";
+        }
+        elseif ( $speak_en == "no" ) {
+            return "Aloha";
+        }
+    }
+
+    function userAgeForm($method, $age, $gender, $speak_en, $submit) {
+        $check_all_fields = CheckAllFields($age, $gender, $speak_en, $submit);
+        $person = Gender($gender);
+        $greetings = SpeakEnglish($speak_en);
+        if ( $method == 'POST' ) {
+            if ( $check_all_fields == 0 ) {
+                echo "Something is wrong! ";
+                return 0;
+            }
+            elseif ( $check_all_fields == 1 ) {
+                Greeting($age, $person, $greetings);
+                return 1;
+            }
+        }
+    }
+
+    userAgeForm($method, $age, $gender, $speak_en, $submit);
 
     ?>
-    <form method="post" action="userage.php">
-
-        <p>Man or woman?</p>
-        <input type="radio" id="woman" name="genre" value="woman">
-        <label for="woman">Woman</label><br>
-        <input type="radio" id="man" name="genre" value="man">
-        <label for="man">Man</label><br>
-        
-        <p>How old are you?</p>
-        <label for="age">Please type your age : </label>
-        <input type="" name="age">
-        <input type="submit" name="submit" value="Submit">
-        <br>
-
-    </form>
 
   </body>
 </html>
