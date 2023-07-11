@@ -76,13 +76,19 @@
     }
 
     function TeamMessage($age, $gender, $name, $submit) {
-        $allfields = CheckAllFields($age, $gender, $name, $submit);
         $criteria = CheckCriteria($age, $gender);
-        if ( $allfields == 1 && $criteria == 1 ) {
+        if ( $criteria == 1 ) {
             echo "Welcome to the team $name!";
         }
-        elseif ( $allfields == 1 && $criteria == 0 ) {
+        elseif ( $criteria == 0 ) {
             echo "Sorry $name, you don't fit the criteria.";
+        }
+    }
+
+    if ( $method == 'POST' ) {
+        $allfields = CheckAllFields($age, $gender, $name, $submit);
+        if ( $allfields == 1 ) {
+            TeamMessage($age, $gender, $name, $submit);
         }
         elseif ( $allfields == 0 ) {
             if ( isset($name) ) {
@@ -92,10 +98,6 @@
                 echo "Please complete all the fields.";
             }
         }
-    }
-
-    if ( $method == 'POST' ) {
-        TeamMessage($age, $gender, $name, $submit);
     }
 
     ?>
