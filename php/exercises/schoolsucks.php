@@ -69,7 +69,7 @@
             EvalGrade($note, $submit);
         }
         elseif ( CheckAllFields($note, $submit) == 0 ) {
-            echo "What are you doing?";
+            echo "What are you doing, step hacker?";
         }
     }
 
