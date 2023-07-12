@@ -76,12 +76,8 @@ function SanitizeInput($data, $regex) {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
-    if ( !preg_match($regex, $data) ) {
-        return 0;
-    }
-    else {
-        return $data;
-    }
+    if ( !preg_match($regex, $data) ) { return 0; }
+    else { return $data; }
 }
 
 ?>
