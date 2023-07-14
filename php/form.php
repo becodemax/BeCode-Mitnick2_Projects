@@ -1,219 +1,75 @@
 
 <?php
 
+$html = file_get_contents('form.html');
+if ( $html === false ) {
+    die("Unable to load.");
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
+require 'filter_array.php';
 
-// $bdate = $event = $artist = $description = $promo = "";
-// $venue_name = $venue_address_1 = $venue_address_2 = $city = $region = $postal = $country = "";
-// $capacity = $attendance = $performance = $time = "";
-// $contact_firstname = $contact_lastname = $email = $number = $recorded = "";
+if ( $method === 'POST' ) {
+    $arr_post = $_POST;
+    $file_arr = $_FILES['fileToUpload'];
+    if ( CheckArraysLength($arr_post, $filters) == false ) {
+        $err_message = "Please fill all the fields.";
+        Error($err_message, $html);
+    } elseif ( CheckForEmpty($arr_post) == true ) {
+        $err_message = "One or more fields haven't been completed.";
+        Error($err_message, $html);
+    } elseif ( CheckFile($file_arr, $files_ext) == false ) {
+        $err_message = "Please only upload an image (png, jpeg or pdf).";
+        Error($err_message, $html);
+    } else {
+        $sanitized_arr = SanitizeInput($arr_post);
+        print_r($sanitized_arr);
+        print_r($file_arr['name']);
+    }
+} else {
+    echo $html;
+}
 
-if ( $method == 'POST' ) {
+function SanitizeInput($arr) {
+    foreach ( $arr as $key => $value ) {
+        $value = trim($value);
+        $value = stripslashes($value);
+        $value = htmlspecialchars($value);
+        $arr[$key] = strtolower($value);
+    }
+    return $arr;
+}
 
-    // if ( empty($_POST['var']) ) { $var_err = " * This field is required"; $submit_err = 1; }
-    // else {
-    //     $regex = "//";
-    //     $var = SanitizeInput($_POST['var'], $regex);
-    //     if ( $var == 0 ) {
-    //         $var_err = " * Please enter a valid format.";
-    //     }
-    // }
-
-    if ( empty($_POST['bdate']) ) { $bdate_err = " * This field is required."; $submit_err = 1; }
-    else {
-        $regex = "/^[0-9]{4}-[0-9]{2}-[0-9]{2}\z/";
-        $bdate = SanitizeInput($_POST['bdate'], $regex);
-        if ( $bdate == 0 ) {
-            $bdate_err = " * Please enter a valid date format.";
-            $submit_err = 1;
+function CheckFile($file_arr, $files_ext) {
+    $filename = $file_arr['name'];
+    $extenstion = $file_arr['type'];
+    if ( isset($filename) ) {
+        if ( in_array($extenstion, $files_ext) ) {
+            return true;
         }
-    }
-
-    if ( empty($_POST['event']) ) { $event_err = " * This field is required."; $submit_err = 1; }
-    else {
-        $regex = "/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]\z/";
-        $event = SanitizeInput($_POST['event'], $regex);
-        if ( $event == 0) {
-            $event_err = " * Please enter a valid time format.";
-            $submit_err = 1;
-        }
-    }
-
-    if ( empty($_POST['artist']) ) { $artist_err = " * This field is required"; $submit_err = 1; }
-    else {
-        $regex = "/^[1-4]$/";
-        $artist = SanitizeInput($_POST['artist'], $regex);
-        if ( $artist == 0 ) {
-            $artist_err = " * Please only select the options above.";
-            $submit_err = 1;
-        }
-    }
-
-    if ( empty($_POST['description']) ) { $description_err = " * This field is required"; $submit_err = 1; }
-    else {
-        $regex = "/^[-a-zA-Z0-9\s.:,àâçéèêëîïôûùüÿñæœ]*$/";
-        $description = SanitizeInput($_POST['description'], $regex);
-        if ( $description == 0 ) {
-            $description_err = " * Only common characters for text are authorized.";
-            $submit_err = 1;
-        }
-    }
-
-    if ( $submit_err == 1 ) {
-        $submit_err = "Please complete all the fields.";
-    }
-    else {
-        session_start();
-        $_SESSION['bdate'] = $bdate;
-        $_SESSION["event"] = $event;
-        $_SESSION['artist'] = $artist;
-        $_SESSION['description'] = $description;
-        header('Location: ./thanks.php');
+    } else {
+        return false;
     }
 }
 
-function SanitizeInput($data, $regex) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    if ( !preg_match($regex, $data) ) { return 0; }
-    else { return $data; }
+function CheckArraysLength($arr, $filters) {
+    if ( sizeof(array_intersect_key($filters, $arr)) === sizeof($filters) ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function CheckForEmpty($arr) {
+    if ( in_array('', $arr) ) {
+        return true;
+    }
+}
+
+function Error($err_message, $html) {
+    $error = '<div style="background-color:red; color: white; padding: 10px; position: absolute; top: 0; left: 50%; width: 90%; text-align: center; transform: translate(-50%,0); z-index: 9999;">'.$err_message.'</div>';
+    $html = str_replace('<body>', '<body>'.$error, $html);
+    echo $html;
 }
 
 ?>
-
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>Entertainment Booking Form</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-        integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-</head>
-
-<style>
-.error {color: #FF0000;}
-</style>
-
-<body>
-    <div class="testbox">
-        <form action="./form.php" method="POST" enctype="multipart/form-data">
-            <div class="banner">
-                <h1>Entertainment Booking Form</h1>
-            </div>
-            <div class="item">
-                <p>Date of Event</p>
-                <input type="date" name="bdate" />
-                <i class="fas fa-calendar-alt"></i>
-                <p class="error"><?php echo $bdate_err;?></p>
-            </div>
-            <div class="item">
-                <p>Time of Event</p>
-                <input type="time" name="event" />
-                <i class="fas fa-clock"></i>
-                <p class="error"><?php echo $event_err;?></p>
-            </div>
-            <div class="item">
-                <p>Select Artist</p>
-                <select name="artist">
-                    <option value="">*Please select*</option>
-                    <option value="1">Artist 1</option>
-                    <option value="2">Artist 2</option>
-                    <option value="3">Artist 3</option>
-                    <option value="4">Artist 4</option>
-                </select>
-                <p class="error"><?php echo $artist_err;?></p>
-            </div>
-            <div class="item">
-                <p>Description of Event</p>
-                <textarea rows="3" name="description"></textarea>
-                <p class="error"><?php echo $description_err;?></p>
-            </div>
-            <div class="item">
-                <p>Promoter's Name</p>
-                <input type="text" name="promo" />
-            </div>
-            <div class="item">
-                <p>Venue Name</p>
-                <input type="text" name="venue_name" />
-            </div>
-            <div class="item">
-                <p>Venue Address</p>
-                <input type="text" name="venue_address_1" placeholder="Street address" />
-                <input type="text" name="venue_address_2" placeholder="Street address line 2" />
-                <div class="city-item">
-                    <input type="text" name="city" placeholder="City" />
-                    <input type="text" name="region" placeholder="Region" />
-                    <input type="text" name="postal" placeholder="Postal / Zip code" />
-                    <select name="country">
-                        <option value="">Country</option>
-                        <option value="1">Russia</option>
-                        <option value="2">Germany</option>
-                        <option value="3">France</option>
-                        <option value="4">Armenia</option>
-                        <option value="5">USA</option>
-                    </select>
-                </div>
-            </div>
-            <div class="item">
-                <p>Venue Capacity</p>
-                <input type="text" name="capacity" />
-            </div>
-            <div class="item">
-                <p>Expected Attendance</p>
-                <input type="text" name="attendance" />
-            </div>
-            <div class="item">
-                <p>Type of Performance</p>
-                <select name="performance">
-                    <option value="">*Please select*</option>
-                    <option value="1">Solo Performance</option>
-                    <option value="2">Full Band</option>
-                </select>
-            </div>
-            <div class="item">
-                <p>Set Time (in minutes)</p>
-                <input type="text" name="time" />
-            </div>
-            <div class="item">
-                <p>Contact Person</p>
-                <div class="name-item">
-                    <input type="text" name="contact_firstname" placeholder="First" />
-                    <input type="text" name="contact_lastname" placeholder="Last" />
-                </div>
-            </div>
-            <div class="item">
-                <p>Contact Email</p>
-                <input type="text" name="email" />
-            </div>
-            <div class="item">
-                <p>Contact Number</p>
-                <input type="text" name="number" />
-            </div>
-            <div class="question">
-                <p>Will this event be recorded?</p>
-                <div class="question-answer">
-                    <div>
-                        <input type="radio" value="yes" id="radio_1" name="recorded" />
-                        <label for="radio_1" class="radio"><span>Yes</span></label>
-                    </div>
-                    <div>
-                        <input type="radio" value="no" id="radio_2" name="recorded" />
-                        <label for="radio_2" class="radio"><span>No</span></label>
-                    </div>
-                </div>
-            </div>
-            <div class="btn-block">
-                <input type="file" name="fileToUpload" id="fileToUpload">
-            </div>
-            <div class="btn-block">
-                <button type="submit" href="/" name="submit">SEND</button>
-                <p class="error"><?php echo $submit_err;?></p>
-            </div>
-        </form>
-    </div>
-
-</body>
-</html>

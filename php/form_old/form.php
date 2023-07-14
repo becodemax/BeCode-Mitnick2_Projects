@@ -1,3 +1,111 @@
+
+<?php
+
+$method = $_SERVER['REQUEST_METHOD'];
+
+// $bdate = $event = $artist = $description = $promo = "";
+// $venue_name = $venue_address_1 = $venue_address_2 = $city = $region = $postal = $country = "";
+// $capacity = $attendance = $performance = $time = "";
+// $contact_firstname = $contact_lastname = $email = $number = $recorded = "";
+
+if ( $method == 'POST' ) {
+
+    // if ( empty($_POST['VAR']) ) { $VAR_err = " * This field is required"; $submit_err = 1; }
+    // else {
+    //     $regex = "//";
+    //     $VAR = SanitizeInput($_POST['VAR'], $regex);
+    //     if ( $VAR == 0 ) {
+    //         $VAR_err = " * Please enter a valid format.";
+    //         $submit_err = 1;
+    //     }
+    // }
+
+    if ( empty($_POST['bdate']) ) { $bdate_err = " * This field is required."; $submit_err = 1; }
+    else {
+        $regex = "/^[0-9]{4}-[0-9]{2}-[0-9]{2}\z/";
+        $bdate = SanitizeInput($_POST['bdate'], $regex);
+        if ( $bdate == 0 ) {
+            $bdate_err = " * Please enter a valid date format.";
+            $submit_err = 1;
+        }
+    }
+
+    if ( empty($_POST['event']) ) { $event_err = " * This field is required."; $submit_err = 1; }
+    else {
+        $regex = "/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]\z/";
+        $event = SanitizeInput($_POST['event'], $regex);
+        if ( $event == 0) {
+            $event_err = " * Please enter a valid time format.";
+            $submit_err = 1;
+        }
+    }
+
+    if ( empty($_POST['artist']) ) { $artist_err = " * This field is required"; $submit_err = 1; }
+    else {
+        $regex = "/^[1-4]$/";
+        $artist = SanitizeInput($_POST['artist'], $regex);
+        if ( $artist == 0 ) {
+            $artist_err = " * Please only select the options above.";
+            $submit_err = 1;
+        }
+    }
+
+    if ( empty($_POST['description']) ) { $description_err = " * This field is required"; $submit_err = 1; }
+    else {
+        $regex = "/^[-a-zA-Z0-9\s.',àâçéèêëîïôûùüÿñæœ]*$/";
+        $description = SanitizeInput($_POST['description'], $regex);
+        if ( $description == 0 ) {
+            $description_err = " * Only common characters for text are authorized.";
+            $submit_err = 1;
+        }
+    }
+
+    if ( empty($_POST['promo']) ) { $promo_err = " * This field is required"; $submit_err = 1; }
+    else {
+        $regex = "/^[-a-zA-Z0-9\sàâçéèêëîïôûùüÿñæœ]*$/";
+        $promo = SanitizeInput($_POST['promo'], $regex);
+        if ( $promo == 0 ) {
+            $promo_err = " * Please enter a valid name.";
+            $submit_err = 1;
+        }
+    }
+
+    if ( empty($_POST['venue_name']) ) { $venue_name_err = " * This field is required"; $submit_err = 1; }
+    else {
+        $regex = "/^[-a-zA-Z0-9\s.',àâçéèêëîïôûùüÿñæœ]*$/";
+        $venue_name = SanitizeInput($_POST['venue_name'], $regex);
+        if ( $venue_name == 0 ) {
+            $venue_name_err = " * Please enter a valid format.";
+            $submit_err = 1;
+        }
+    }
+
+    if ( $submit_err == 1 ) {
+        $submit_err = "Please complete all the fields.";
+    }
+    else {
+        session_start();
+        $_SESSION['bdate'] = $bdate;
+        $_SESSION["event"] = $event;
+        $_SESSION['artist'] = $artist;
+        $_SESSION['description'] = $description;
+        $_SESSION['promo'] = $promo;
+        $_SESSION['venue_name'] = $venue_name;
+        header('Location: ./thanks.php');
+    }
+}
+
+function SanitizeInput($data, $regex) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    $data = strtolower($data);
+    if ( !preg_match($regex, $data) ) { return 0; }
+    else { return $data; }
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -9,6 +117,10 @@
         integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 </head>
 
+<style>
+.error {color: #FF0000;}
+</style>
+
 <body>
     <div class="testbox">
         <form action="./form.php" method="POST" enctype="multipart/form-data">
@@ -19,11 +131,13 @@
                 <p>Date of Event</p>
                 <input type="date" name="bdate" />
                 <i class="fas fa-calendar-alt"></i>
+                <p class="error"><?php echo $bdate_err;?></p>
             </div>
             <div class="item">
                 <p>Time of Event</p>
                 <input type="time" name="event" />
                 <i class="fas fa-clock"></i>
+                <p class="error"><?php echo $event_err;?></p>
             </div>
             <div class="item">
                 <p>Select Artist</p>
@@ -34,18 +148,22 @@
                     <option value="3">Artist 3</option>
                     <option value="4">Artist 4</option>
                 </select>
+                <p class="error"><?php echo $artist_err;?></p>
             </div>
             <div class="item">
                 <p>Description of Event</p>
                 <textarea rows="3" name="description"></textarea>
+                <p class="error"><?php echo $description_err;?></p>
             </div>
             <div class="item">
                 <p>Promoter's Name</p>
                 <input type="text" name="promo" />
+                <p class="error"><?php echo $promo_err;?></p>
             </div>
             <div class="item">
                 <p>Venue Name</p>
                 <input type="text" name="venue_name" />
+                <p class="error"><?php echo $venue_name_err;?></p>
             </div>
             <div class="item">
                 <p>Venue Address</p>
@@ -117,7 +235,8 @@
                 <input type="file" name="fileToUpload" id="fileToUpload">
             </div>
             <div class="btn-block">
-                <button type="submit" href="/" value="submit" name="submit">SEND</button>
+                <button type="submit" href="/" name="submit">SEND</button>
+                <p class="error"><?php echo $submit_err;?></p>
             </div>
         </form>
     </div>
