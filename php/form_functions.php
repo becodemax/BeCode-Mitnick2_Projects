@@ -22,7 +22,7 @@ function CheckWrongInput($arr, $filters) {
     $combined_arr = array_combine($arr, $filters);
     foreach ( $combined_arr as $input => $regx ) {
         if ( !preg_match($regx, $input) ) {
-            return true;
+            return $input;
         }
     }
 }
@@ -39,19 +39,27 @@ function CheckFileExtension($file_arr, $files_ext) {
     }
 }
 
-// classic php sanitizing function just to be sure
-function SanitizeInput($arr) {
+// classic php sanitizing function on array
+function SanitizeArray($arr) {
     foreach ( $arr as $key => $value ) {
         $value = trim($value);
         $value = stripslashes($value);
-        $value = htmlspecialchars($value);
+        $value = htmlspecialchars($value, ENT_QUOTES);
         $arr[$key] = strtolower($value);
     }
     return $arr;
 }
 
+// classic php sanitizing function on single input
+function SanitizeInput($value) {
+    $value = trim($value);
+    $value = stripslashes($value);
+    $value = htmlspecialchars($value, ENT_QUOTES);
+    return strtolower($value);
+}
+
 // display error message over html
-function Error($err_message, $html) {
+function ErrorDisplay($err_message, $html) {
     $error = '<div style="background-color:red; color: white; padding: 10px; position: absolute; top: 0; left: 50%; width: 90%; text-align: center; transform: translate(-50%,0); z-index: 9999;">'.$err_message.'</div>';
     $html = str_replace('<body>', '<body>'.$error, $html);
     echo $html;
