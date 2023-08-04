@@ -10,7 +10,7 @@ This repository includes projects in the following domains:
 
 1. **Bash Scripts**: Simple scripts written in Bash for various tasks.
 2. **Python Scripts**: Python scripts exploring different concepts and use cases.
-3. **Networking and administration**: Creating a simple LAN network with two endpoints (Windows & Linux machines), handled by Ubuntu Server for DHCP & DNS.
+3. **Networking and administration**: Creating a simple LAN network with two endpoints (Windows & Linux machines), handled by Ubuntu Server (DHCP, DNS, MariaDB & Apache).
 4. **PHP Scripts for Form Sanitizing**: PHP scripts for secure form data handling.
 
 Feel free to explore each project's directory and find my code and insights about what I learned during the course.
